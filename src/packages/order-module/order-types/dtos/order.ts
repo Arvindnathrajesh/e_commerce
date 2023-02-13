@@ -6,6 +6,11 @@ export class Item{
 }
 
 export class Order{
-    orderId: number;
+    id: string;
     items: Item[];
+}
+
+export class Coupon{
+    couponCode: string;
+    orderCount: number;
 }
