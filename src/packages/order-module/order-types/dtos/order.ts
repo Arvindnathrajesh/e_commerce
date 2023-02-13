@@ -8,6 +8,9 @@ export class Item{
 export class Order{
     id: string;
     items: Item[];
+    totalPrice: number;
+    discount: number;
+    finalPrice: number;
 }
 
 export class Coupon{

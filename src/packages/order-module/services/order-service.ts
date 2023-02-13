@@ -47,6 +47,20 @@ export class OrderService {
       throw new BaseError('Orde must contain atleast 1 item')
     }
     const isValidCoupon: boolean = this.checkCouponValidity(couponCode)
+    order.totalPrice = order.items.reduce((sum, currItem) => {
+        return sum + currItem.price;
+      }, 0);
+    
+    if(isValidCoupon){
+      order.discount = order.totalPrice/10
+      order.finalPrice = order.totalPrice - order.discount
+    }
+    else{
+      order.finalPrice = order.totalPrice
+    }
+    this.createOrder()
+
+    return order;
   }
 
   checkCouponValidity(couponCode){
@@ -55,7 +69,7 @@ export class OrderService {
       return false;
     }
     const orderNo = orders.length
-    if(coupon.orderCount % orderNo === 0){
+    if( orderNo % coupon.orderCount === 0){
       return true;
     }
     return false;
@@ -64,7 +78,10 @@ export class OrderService {
   createOrder(){
     orders.push({
       id: nanoid(),
-      items:[]
+      items: [],
+      totalPrice: 0,
+      discount: 0,
+      finalPrice: 0
     })
   }
 
