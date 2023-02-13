@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Get, Post } from "@nestjs/common";
 import { Coupon } from "src/packages/order-module/order-types/dtos/order";
 import { OrderService } from "src/packages/order-module/services/order-service";
 
@@ -12,6 +12,12 @@ export class AdminOrderController {
     @Body() coupon: Coupon,
   ) {
     return this.orderService.createCoupon(coupon);
+  }
+
+  @Get('/orders')
+  getOrders(
+  ) {
+    return this.orderService.getOrders();
   }
 
 }

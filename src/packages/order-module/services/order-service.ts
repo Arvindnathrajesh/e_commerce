@@ -1,9 +1,15 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { Coupon, Item, Order } from "../order-types/dtos/order";
 import { nanoid } from 'nanoid'
 import { BaseError } from "../errors/base-error";
 
-let orders:Order[] = []
+let orders:Order[] = [{
+  id: nanoid(),
+  items: [],
+  totalPrice: 0,
+  discount: 0,
+  finalPrice: 0 
+}]
 let coupons: Coupon[] = []
 
 @Injectable()
@@ -29,13 +35,16 @@ export class OrderService {
   constructor(
   ) {}
 
-  getOrder(){
-    return '212';
+  getOrders(){
+    return orders;
   }
 
-  addItem(itemId){
+  addItem(itemId:number){
 
-    const item = this.Items.find(i=>i.id === itemId)
+    const item = this.Items.find((i)=>i.id === itemId)
+    if(!item){
+      throw new BadRequestException('Invalid Item', { cause: new Error(), description: 'Invalid Item' })
+    }
     orders[orders.length-1].items.push(item)
     return orders[orders.length-1];
   }
@@ -44,7 +53,7 @@ export class OrderService {
 
     const order = orders[orders.length-1];
     if(order.items.length===0){
-      throw new BaseError('Orde must contain atleast 1 item')
+      throw new BadRequestException('Order must contain atleast 1 item', { cause: new Error(), description: 'Order must contain atleast 1 item' })
     }
     const isValidCoupon: boolean = this.checkCouponValidity(couponCode)
     order.totalPrice = order.items.reduce((sum, currItem) => {
@@ -86,6 +95,10 @@ export class OrderService {
   }
 
   createCoupon(coupon: Coupon){
+    const existingCoupon = coupons.find((c)=>c.couponCode === coupon.couponCode)
+    if(existingCoupon){
+      throw new BadRequestException('Coupon alredy exists', { cause: new Error(), description: 'Coupon alredy exists' })
+    }
     coupons.push(coupon)
     return coupons;
   }

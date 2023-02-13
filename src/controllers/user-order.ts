@@ -9,15 +9,15 @@ export class UserOrderController {
 
   @Post('/item')
   addItem(
-    @Body() itemId: number,
+    @Body() body: { itemId: number },
   ) {
-    return this.orderService.addItem(itemId);
+    return this.orderService.addItem(body.itemId);
   }
 
   @Put('/checkout')
   checkout(
-    @Body() couponCode: string,
+    @Body() body: { couponCode: string },
   ) {
-    return this.orderService.checkout(couponCode);
+    return this.orderService.checkout(body.couponCode);
   }
 }
