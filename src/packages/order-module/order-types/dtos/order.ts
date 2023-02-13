@@ -1,3 +1,4 @@
+// The data transfer objects to store the values.
 
 export class Item{
     id: number;

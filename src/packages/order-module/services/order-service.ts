@@ -55,6 +55,7 @@ export class OrderService {
     return order;
   }
 
+  //checkout function for the user: Calculates the total costs, checks for couponValidity 
   checkout(couponCode: string){
 
     const order = orders[orders.length-1];
@@ -64,36 +65,46 @@ export class OrderService {
     const isValidCoupon: boolean = this.checkCouponValidity(couponCode)
     
     this.calculateTotalPrice(order)
+
+    //checks for coupon validity
     if(isValidCoupon){
+      //if valid coupon gives 10 percent discount
       order.discount = order.totalPrice/10
       order.finalPrice = order.totalPrice - order.discount
     }
     else{
       order.finalPrice = order.totalPrice
     }
+
+    //creates the next empty order
     this.createOrder()
 
     return order;
   }
   
+  //To calculate the total price of an order
   calculateTotalPrice(order:Order){
     order.totalPrice = order.items.reduce((sum, currItem) => {
       return sum + currItem.price;
     }, 0);
   }
 
+  //checks the validity of Coupon
   checkCouponValidity(couponCode){
     const coupon = coupons.find(c=>c.couponCode === couponCode)
+    //checks if it is a valid couponCode
     if(!coupon){
       return false;
     }
     const orderNo = orders.length
+    //checks if the couponCode can be applied to this particular order
     if( orderNo % coupon.orderCount === 0){
       return true;
     }
     return false;
   }
 
+  //creating an order
   createOrder(){
     orders.push({
       id: nanoid(),
@@ -104,8 +115,10 @@ export class OrderService {
     })
   }
 
+  //create a coupon for admin
   createCoupon(coupon: Coupon){
     const existingCoupon = coupons.find((c)=>c.couponCode === coupon.couponCode)
+    //checks if coupon code already exists
     if(existingCoupon){
       throw new BadRequestException('Coupon alredy exists', { cause: new Error(), description: 'Coupon alredy exists' })
     }
