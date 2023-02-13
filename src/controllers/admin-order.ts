@@ -7,6 +7,7 @@ export class AdminOrderController {
   
   constructor(private readonly orderService: OrderService) {}
 
+  // Admin API to create coupon 
   @Post('/coupon')
   createCoupon(
     @Body() coupon: Coupon,
@@ -14,6 +15,7 @@ export class AdminOrderController {
     return this.orderService.createCoupon(coupon);
   }
 
+  // Admin API to list all the orders
   @Get('/orders')
   getOrders(
   ) {

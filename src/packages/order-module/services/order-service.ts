@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { Coupon, Item, Order } from "../order-types/dtos/order";
 import { nanoid } from 'nanoid'
-import { BaseError } from "../errors/base-error";
 
+// Global variables to store the data of Orders and Coupons
 let orders:Order[] = [{
   id: nanoid(),
   items: [],
@@ -15,6 +15,7 @@ let coupons: Coupon[] = []
 @Injectable()
 export class OrderService {
 
+  //Items
   private Items: Item[] =[
     {
       id: 1,
@@ -39,14 +40,19 @@ export class OrderService {
     return orders;
   }
 
+  // Function to add an item to the order
   addItem(itemId:number){
 
     const item = this.Items.find((i)=>i.id === itemId)
+    //Check if it is an invalid item
     if(!item){
       throw new BadRequestException('Invalid Item', { cause: new Error(), description: 'Invalid Item' })
     }
-    orders[orders.length-1].items.push(item)
-    return orders[orders.length-1];
+    const  order = orders[orders.length-1]
+    //Add the item to the order and return it
+    order.items.push(item)
+    this.calculateTotalPrice(order)
+    return order;
   }
 
   checkout(couponCode: string){
@@ -56,10 +62,8 @@ export class OrderService {
       throw new BadRequestException('Order must contain atleast 1 item', { cause: new Error(), description: 'Order must contain atleast 1 item' })
     }
     const isValidCoupon: boolean = this.checkCouponValidity(couponCode)
-    order.totalPrice = order.items.reduce((sum, currItem) => {
-        return sum + currItem.price;
-      }, 0);
     
+    this.calculateTotalPrice(order)
     if(isValidCoupon){
       order.discount = order.totalPrice/10
       order.finalPrice = order.totalPrice - order.discount
@@ -70,6 +74,12 @@ export class OrderService {
     this.createOrder()
 
     return order;
+  }
+  
+  calculateTotalPrice(order:Order){
+    order.totalPrice = order.items.reduce((sum, currItem) => {
+      return sum + currItem.price;
+    }, 0);
   }
 
   checkCouponValidity(couponCode){

@@ -7,6 +7,7 @@ export class UserOrderController {
   
   constructor(private readonly orderService: OrderService) {}
 
+  //user API to add an item
   @Post('/item')
   addItem(
     @Body() body: { itemId: number },
@@ -14,6 +15,7 @@ export class UserOrderController {
     return this.orderService.addItem(body.itemId);
   }
 
+  //user API to checkout and complete the order
   @Put('/checkout')
   checkout(
     @Body() body: { couponCode: string },
