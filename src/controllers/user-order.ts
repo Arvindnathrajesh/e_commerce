@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 import { OrderService } from 'src/packages/order-module/services/order-service';
 
 
@@ -12,5 +12,12 @@ export class UserOrderController {
     @Body() itemId: number,
   ) {
     return this.orderService.addItem(itemId);
+  }
+
+  @Put('/checkout')
+  checkout(
+    @Body() couponCode: string,
+  ) {
+    return this.orderService.checkout(couponCode);
   }
 }

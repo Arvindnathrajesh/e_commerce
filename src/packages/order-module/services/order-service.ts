@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { Item, Order } from "../order-types/dtos/order";
+import { Coupon, Item, Order } from "../order-types/dtos/order";
 import { nanoid } from 'nanoid'
 
-let order:Order[] = []
+let orders:Order[] = []
+let coupons: Coupon[] = []
 
 @Injectable()
 export class OrderService {
@@ -34,19 +35,24 @@ export class OrderService {
   addItem(itemId){
 
     const item = this.Items.find(i=>i.id === itemId)
-    order[order.length-1].items.push(item)
-    return order[order.length-1];
+    orders[orders.length-1].items.push(item)
+    return orders[orders.length-1];
   }
 
-  checkout(){
+  checkout(couponCode){
 
   }
 
   createOrder(){
-    order.push({
+    orders.push({
       id: nanoid(),
       items:[]
     })
+  }
+
+  createCoupon(coupon: Coupon){
+    coupons.push(coupon)
+    return coupons;
   }
 
 }
