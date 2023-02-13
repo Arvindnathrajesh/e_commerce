@@ -3,7 +3,7 @@ import { Coupon } from "src/packages/order-module/order-types/dtos/order";
 import { OrderService } from "src/packages/order-module/services/order-service";
 
 @Controller({ path: '/admin' })
-export class UserOrderController {
+export class AdminOrderController {
   
   constructor(private readonly orderService: OrderService) {}
 

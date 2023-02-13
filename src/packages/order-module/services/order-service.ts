@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Coupon, Item, Order } from "../order-types/dtos/order";
 import { nanoid } from 'nanoid'
+import { BaseError } from "../errors/base-error";
 
 let orders:Order[] = []
 let coupons: Coupon[] = []
@@ -39,8 +40,25 @@ export class OrderService {
     return orders[orders.length-1];
   }
 
-  checkout(couponCode){
+  checkout(couponCode: string){
 
+    const order = orders[orders.length-1];
+    if(order.items.length===0){
+      throw new BaseError('Orde must contain atleast 1 item')
+    }
+    const isValidCoupon: boolean = this.checkCouponValidity(couponCode)
+  }
+
+  checkCouponValidity(couponCode){
+    const coupon = coupons.find(c=>c.couponCode === couponCode)
+    if(!coupon){
+      return false;
+    }
+    const orderNo = orders.length
+    if(coupon.orderCount % orderNo === 0){
+      return true;
+    }
+    return false;
   }
 
   createOrder(){
